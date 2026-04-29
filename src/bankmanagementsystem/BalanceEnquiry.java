@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 
 public class BalanceEnquiry extends JFrame implements ActionListener {
     String pin_number;
@@ -25,23 +24,8 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
         back.addActionListener(this);
         image.add(back);
 
-        Conn c= new Conn();
-        int balance=0;
-        try{
-            ResultSet rs = c.s.executeQuery("select * from bank where Pin = '"+pin_number+"'");
-            while(rs.next()){
-                if(rs.getString("type").equals("Deposit")){
-                    balance+=Integer.parseInt(rs.getString("amount"));
-                }else{
-                    balance -= Integer.parseInt(rs.getString("amount"));
-                }
-            }
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-
-        JLabel text = new JLabel("Your Current Account Balance is Rs. "+balance);
+        // Placeholder label - the thread will fill this in when the balance is ready.
+        JLabel text = new JLabel("Calculating balance...");
         text.setForeground(Color.WHITE);
         text.setBounds(170,300,400,30);
         image.add(text);
@@ -52,6 +36,25 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
         setTitle("Balance Enquiry");
         setLocation(300,0);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // 1. Build a small "Loading..." dialog (non-modal so it does NOT block).
+        JDialog loading = new JDialog(this, "Please wait", false);
+        JLabel msg = new JLabel("   Fetching balance, please wait...   ");
+        msg.setFont(new Font("Raleway", Font.BOLD, 16));
+        loading.add(msg);
+        loading.pack();
+        loading.setLocationRelativeTo(this);
+        loading.setVisible(true);
+
+        // 2. Create the thread and hand it the dialog + the label to update.
+        BalanceEnquiryThread t = new BalanceEnquiryThread(pin_number, loading, text);
+
+        // 3. MIN_PRIORITY because this is a background read - the user can wait
+        //    while looking at the screen.
+        t.setPriority(Thread.MIN_PRIORITY);
+
+        // 4. Start the thread - run() executes in the background.
+        t.start();
     }
 
     public static void main(String[] args) {

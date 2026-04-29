@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 public class Deposit extends JFrame implements ActionListener {
 
@@ -61,22 +60,26 @@ public class Deposit extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==deposit){
             String money = amount.getText();
-            Date date = new Date();
             if(money.equals("")){
                 JOptionPane.showMessageDialog(null,"Please enter the amount you want to deposit");
             }else{
-                try {
-                    Conn c = new Conn();
-                    String query = "insert into bank values ('"+pin_number+"', '"+date+"', 'Deposit', '"+money+"')";
-                    c.s.executeUpdate(query);
-                    JOptionPane.showMessageDialog(null,"Rs. "+money+" is deposited successfully.");
-                    setVisible(false);
-                    new Transactions(pin_number).setVisible(true);
-                }
-                catch (Exception e1){
-                    System.out.println(e1);
-                }
+                // 1. Build a small "Processing..." dialog (non-modal so it does NOT block).
+                JDialog loading = new JDialog(this, "Please wait", false);
+                JLabel msg = new JLabel("   Processing deposit, please wait...   ");
+                msg.setFont(new Font("Raleway", Font.BOLD, 16));
+                loading.add(msg);
+                loading.pack();
+                loading.setLocationRelativeTo(this);
+                loading.setVisible(true);
 
+                // 2. Create the thread and hand it the dialog + this frame.
+                DepositThread t = new DepositThread(pin_number, money, loading, this);
+
+                // 3. MAX_PRIORITY because the user is waiting for confirmation.
+                t.setPriority(Thread.MAX_PRIORITY);
+
+                // 4. Start the thread - run() executes in the background.
+                t.start();
             }
         } else if (e.getSource()==back) {
             setVisible(false);

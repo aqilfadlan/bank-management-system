@@ -13,7 +13,7 @@ public class Conn {
     public Conn(){
 
         try {
-            c=DriverManager.getConnection("jdbc:mysql:///bankmanagementsystem","root","adityakundu");
+            c=DriverManager.getConnection("jdbc:mysql:///bankmanagementsystem","root","1234");
             s = c.createStatement();
         }
         catch (Exception e){

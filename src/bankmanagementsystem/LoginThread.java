@@ -2,17 +2,24 @@ package bankmanagementsystem;
 
 import java.sql.ResultSet;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 // We extend Thread so this class IS a thread.
 public class LoginThread extends Thread {
 
     String cardNo;
     String pin;
     boolean success = false;   // result we can read after the thread finishes
+    JDialog loadingDialog;
+    Login loginFrame;
 
     // Constructor: take the card number and pin from the Login screen
-    LoginThread(String cardNo, String pin) {
+    LoginThread(String cardNo, String pin, JDialog loadingDialog, Login loginFrame) {
         this.cardNo = cardNo;
         this.pin = pin;
+        this.loadingDialog = loadingDialog;
+        this.loginFrame = loginFrame;
     }
 
     // run() is what executes when we call start()
@@ -30,6 +37,14 @@ public class LoginThread extends Thread {
 
             if (rs.next()) {
                 success = true;
+            }
+
+            loadingDialog.dispose();
+            if (success) {
+                loginFrame.setVisible(false);
+                new Transactions(pin).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Incorrect Card Number or PIN");
             }
 
             System.out.println("Login thread finished.");

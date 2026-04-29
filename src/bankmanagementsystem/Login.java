@@ -6,7 +6,6 @@ package bankmanagementsystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.ResultSet;
 
 /**
  *
@@ -101,22 +100,32 @@ public class Login extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent ae){
         if (ae.getSource()==login){
-            Conn c = new Conn();
             String card_number = cardtext.getText();
             String pin_number = pintext.getText();
-            String query = "select * from login where CardNo = '"+card_number+"' and Pin = '"+pin_number+"'";
 
+            // 1. Create the thread object
+            LoginThread t = new LoginThread(card_number, pin_number);
+
+            // 2. Set its priority (1 = MIN, 5 = NORMAL, 10 = MAX)
+            t.setPriority(Thread.MAX_PRIORITY);
+
+            // 3. Start the thread - this calls run() in the background
+            t.start();
+
+            // 4. Wait for the thread to finish before continuing.
+            //    join() makes the main thread pause until t is done.
             try {
-                ResultSet rs = c.s.executeQuery(query);
-                if(rs.next()){
-                    setVisible(false);
-                    new Transactions(pin_number).setVisible(true);
-                }else {
-                    JOptionPane.showMessageDialog(null,"Incorrect Card Number or PIN");
-                }
-            }
-            catch (Exception e){
+                t.join();
+            } catch (InterruptedException e) {
                 System.out.println(e);
+            }
+
+            // 5. Now read the result the thread produced
+            if (t.success) {
+                setVisible(false);
+                new Transactions(pin_number).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Incorrect Card Number or PIN");
             }
         }
         else if(ae.getSource()==clear){

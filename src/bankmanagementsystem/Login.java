@@ -103,30 +103,26 @@ public class Login extends JFrame implements ActionListener{
             String card_number = cardtext.getText();
             String pin_number = pintext.getText();
 
-            // 1. Create the thread object
-            LoginThread t = new LoginThread(card_number, pin_number);
+            // 1. Build a small "Logging in..." dialog.
+            //    The "false" makes it non-modal so it does NOT block the UI.
+            JDialog loading = new JDialog(this, "Please wait", false);
+            JLabel msg = new JLabel("   Logging in, please wait...   ");
+            msg.setFont(new Font("Raleway", Font.BOLD, 16));
+            loading.add(msg);
+            loading.pack();
+            loading.setLocationRelativeTo(this);
+            loading.setVisible(true);
 
-            // 2. Set its priority (1 = MIN, 5 = NORMAL, 10 = MAX)
+            // 2. Create the thread object and hand it the dialog + this frame
+            //    so it can close the dialog and open Transactions when done.
+            LoginThread t = new LoginThread(card_number, pin_number, loading, this);
+
+            // 3. Set its priority (1 = MIN, 5 = NORMAL, 10 = MAX)
             t.setPriority(Thread.MAX_PRIORITY);
 
-            // 3. Start the thread - this calls run() in the background
+            // 4. Start the thread - this calls run() in the background.
+            //    We do NOT join() here, otherwise the loading dialog would freeze.
             t.start();
-
-            // 4. Wait for the thread to finish before continuing.
-            //    join() makes the main thread pause until t is done.
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
-
-            // 5. Now read the result the thread produced
-            if (t.success) {
-                setVisible(false);
-                new Transactions(pin_number).setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(null, "Incorrect Card Number or PIN");
-            }
         }
         else if(ae.getSource()==clear){
             cardtext.setText("");

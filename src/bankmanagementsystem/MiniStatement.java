@@ -25,36 +25,24 @@ public class MiniStatement extends JFrame {
         balance.setBounds(30,460,300,20);
         add(balance);
         
-        try{
-            Conn c = new Conn();
-            ResultSet rs = c.s.executeQuery("select * from login where Pin = '"+pin_number+"'");
+        // Placeholders the thread will fill in.
+        mini.setText("<html>Loading transactions...<html>");
+        balance.setText("Loading balance...");
+        card.setText("Loading card number...");
 
-            while(rs.next()){
-                card.setText("Card Number : "+rs.getString("CardNo").substring(0,4)+"XXXXXXXX"+rs.getString("CardNo").substring(12));
-            }
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
+        // Loading dialog (non-modal!)
+        JDialog loading = new JDialog(this, "Please wait", false);
+        JLabel msg = new JLabel("   Loading mini statement, please wait...   ");
+        msg.setFont(new Font("Raleway", Font.BOLD, 16));
+        loading.add(msg);
+        loading.pack();
+        loading.setLocationRelativeTo(this);
+        loading.setVisible(true);
 
-        try{
-            Conn c = new Conn();
-            ResultSet rs = c.s.executeQuery("select * from bank where Pin = '"+pin_number+"'");
-            int bal=0;
-            while(rs.next()){
-                mini.setText(mini.getText()+"<html>"+rs.getString("date")+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+rs.getString("type")+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+rs.getString("amount")+"<br><br><html>");
-                if(rs.getString("type").equals("Deposit")){
-                    bal+=Integer.parseInt(rs.getString("amount"));
-                }else{
-                    bal -= Integer.parseInt(rs.getString("amount"));
-                }
-            }
-            // setting the JLabel to display the balance of your account
-            balance.setText("Your account balance is Rs. "+ bal);
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
+        // Thread
+        MiniStatementThread t = new MiniStatementThread(pin_number, loading, card, mini, balance);
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.start();
 
         setSize(400,600);
         setLocation(20,20);
@@ -62,7 +50,7 @@ public class MiniStatement extends JFrame {
         setLayout(null);
         setVisible(true);
         setTitle("Mini Statement");
-//        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//      setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     public static void main(String[] args) {
         new MiniStatement("");

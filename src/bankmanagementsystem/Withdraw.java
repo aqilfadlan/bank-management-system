@@ -57,26 +57,23 @@ public class Withdraw extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==withdrawl){
             String money = amount.getText();
-            Date date = new Date();
             if(money.equals("")){
                 JOptionPane.showMessageDialog(null,"Please enter the amount you want to withdraw");
             }else{
-                try {
-                    Conn c = new Conn();
-                    String query = "insert into bank values ('"+pin_number+"', '"+date+"', 'Withdrawl', '"+money+"')";
-                    c.s.executeUpdate(query);
-                    JOptionPane.showMessageDialog(null,"Rs. "+money+" is withdrawn successfully.");
-                    setVisible(false);
-                    new Transactions(pin_number).setVisible(true);
-                }
-                catch (Exception e1){
-                    System.out.println(e1);
-                }
+                // 1. Build the loading dialog (non-modal!)
+                JDialog loading = new JDialog(this, "Please wait", false);
+                JLabel msg = new JLabel("   Processing withdrawal, please wait...   ");
+                msg.setFont(new Font("Raleway", Font.BOLD, 16));
+                loading.add(msg);
+                loading.pack();
+                loading.setLocationRelativeTo(this);
+                loading.setVisible(true);
 
+                // 2. Create + start the thread.
+                WithdrawThread t = new WithdrawThread(pin_number, money, loading, this);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
             }
-        } else if (e.getSource()==back) {
-            setVisible(false);
-            new Transactions(pin_number).setVisible(true);
         }
     }
 }

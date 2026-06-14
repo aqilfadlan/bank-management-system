@@ -70,6 +70,6 @@ public class MiniStatementThread extends Thread {
         loadingDialog.dispose();
         cardLabel.setText(cardText);
         miniLabel.setText(miniText.toString());
-        balanceLabel.setText("Your account balance is Rs. " + bal);
+        balanceLabel.setText("Your account balance is RM " + bal);
     }
 }

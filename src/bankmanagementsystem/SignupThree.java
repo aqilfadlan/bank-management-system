@@ -12,11 +12,12 @@ public class SignupThree extends JFrame implements ActionListener {
     JCheckBox c1,c2,c3,c4,c5,c6,c7;
     JButton submit,cancel;
     String formno;
+    Login loginFrame;
 
-
-    SignupThree(String formno){
+    SignupThree(String formno, Login loginFrame){
 
         this.formno=formno;
+        this.loginFrame=loginFrame;
 
         JLabel heading = new JLabel("Page 3 : Account Details");
         heading.setFont(new Font("Raleway",Font.BOLD,22));
@@ -140,10 +141,10 @@ public class SignupThree extends JFrame implements ActionListener {
         setTitle("NEW ACCOUNT APPLICATION FORM- PAGE 3");
         setLayout(null);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
     public static void main(String[] args) {
-        new SignupThree("");
+        new Login();
     }
 
     @Override
@@ -196,15 +197,15 @@ public class SignupThree extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null,"Card Number : "+cardnumber+"\nPIN : "+pinnumber);
 
                     setVisible(false);
-                    new Deposit(pinnumber).setVisible(true);
+                    new Deposit(pinnumber, loginFrame).setVisible(true);
                 }
             }
             catch(Exception e1){
                 System.out.println(e1);
             }
         } else if (e.getSource()==cancel) {
-            setVisible(false);
-            new Login().setVisible(true);
+            dispose();
+            loginFrame.setVisible(true);
         }
     }
 }

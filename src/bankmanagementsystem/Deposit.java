@@ -4,17 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 public class Deposit extends JFrame implements ActionListener {
 
     JTextField amount;
     JButton deposit,back;
     String pin_number;
+    Login loginFrame;
 
-    Deposit(String pin_number){
+    Deposit(String pin_number, Login loginFrame){
 
         this.pin_number=pin_number;
+        this.loginFrame=loginFrame;
 
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900,900,Image.SCALE_DEFAULT);
@@ -50,37 +51,36 @@ public class Deposit extends JFrame implements ActionListener {
         setLayout(null);
 //        setUndecorated(true);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {
-        new Deposit("");
+        new Login();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==deposit){
             String money = amount.getText();
-            Date date = new Date();
             if(money.equals("")){
                 JOptionPane.showMessageDialog(null,"Please enter the amount you want to deposit");
             }else{
-                try {
-                    Conn c = new Conn();
-                    String query = "insert into bank values ('"+pin_number+"', '"+date+"', 'Deposit', '"+money+"')";
-                    c.s.executeUpdate(query);
-                    JOptionPane.showMessageDialog(null,"Rs. "+money+" is deposited successfully.");
-                    setVisible(false);
-                    new Transactions(pin_number).setVisible(true);
-                }
-                catch (Exception e1){
-                    System.out.println(e1);
-                }
+                // Show a small non-modal "please wait" dialog while the deposit runs.
+                JDialog loading = new JDialog(this, "Please wait", false);
+                JLabel msg = new JLabel("   Processing deposit, please wait...   ");
+                msg.setFont(new Font("Raleway", Font.BOLD, 16));
+                loading.add(msg);
+                loading.pack();
+                loading.setLocationRelativeTo(this);
+                loading.setVisible(true);
 
+                // Run the insert on a background thread so the UI stays responsive.
+                DepositThread t = new DepositThread(pin_number, money, loading, this, loginFrame);
+                t.start();
             }
         } else if (e.getSource()==back) {
             setVisible(false);
-            new Transactions(pin_number).setVisible(true);
+            new Transactions(pin_number, loginFrame).setVisible(true);
         }
     }
 }

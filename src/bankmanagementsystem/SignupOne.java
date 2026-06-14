@@ -17,20 +17,17 @@ public class SignupOne extends JFrame implements ActionListener {
     JButton next;
 
     long random;
-    
-    //create the constructor
-    SignupOne(){
+    Login loginFrame;
+
+    SignupOne(Login loginFrame){
+        this.loginFrame = loginFrame;
         //creating a random form number.
         Random ran = new Random();
         random = Math.abs((ran.nextLong()%9000L)+1000L);
         
-        String [] states ={"Andhra Pradesh","Arunachal Pradesh","Assam",
-        "Bihar","Chattisgarh","Goa","Gujrat","Haryana","Himachal Pradesh",
-        "Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharastra","Manipur",
-        "Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim",
-        "Tamil Nadu","Telengana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal",
-        "Andaman Nicobar","Chandigarh","Dadra Nagar Haveli","Daman Diu","Jammu Kashmir",
-        "Ladakh","Lakshadeep","Delhi","Puducherry"};
+        String [] states ={"Johor","Kedah","Kelantan","Melaka","Negeri Sembilan",
+        "Pahang","Perak","Perlis","Pulau Pinang","Sabah","Sarawak","Selangor",
+        "Terengganu","Kuala Lumpur","Labuan","Putrajaya"};
         //Creating the labels.
         JLabel formno = new JLabel("Application Form No. "+random);
         formno.setFont(new Font("Raleway",Font.BOLD,38));
@@ -174,11 +171,10 @@ public class SignupOne extends JFrame implements ActionListener {
         setTitle("NEW ACCOUNT APPLICATION FORM- PAGE 1");
         setLayout(null);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
     public static void main(String args[]){
-
-        new SignupOne();
+        new Login();
     }
 
     @Override
@@ -238,7 +234,7 @@ public class SignupOne extends JFrame implements ActionListener {
                 c.s.executeUpdate(query);
 
                 setVisible(false);
-                new SignupTwo(formno).setVisible(true);
+                new SignupTwo(formno, loginFrame).setVisible(true);
             }
         }catch (Exception e1){
             System.out.println(e1);

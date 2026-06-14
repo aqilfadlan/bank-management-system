@@ -15,6 +15,7 @@ public class Login extends JFrame implements ActionListener{
     JButton login,clear,signup;
     JTextField cardtext;
     JPasswordField pintext;
+    JLabel statusLabel;   // on-screen "logging in..." text instead of a pop-up dialog
 
     //creating the constructor to create the login frame.
     Login(){
@@ -92,6 +93,14 @@ public class Login extends JFrame implements ActionListener{
         signup.addActionListener(this);
         add(signup);
 
+        // On-screen status label (empty until login starts). Sits below the buttons,
+        // so the "logging in..." text appears on the ATM screen itself, not in a pop-up.
+        statusLabel = new JLabel("");
+        statusLabel.setFont(new Font("Raleway", Font.BOLD, 16));
+        statusLabel.setForeground(Color.BLUE);
+        statusLabel.setBounds(120, 400, 410, 30);
+        add(statusLabel);
+
         setSize(800,500);
         setVisible(true);
         setLocation(350,200);
@@ -103,25 +112,13 @@ public class Login extends JFrame implements ActionListener{
             String card_number = cardtext.getText();
             String pin_number = pintext.getText();
 
-            // 1. Build a small "Logging in..." dialog.
-            //    The "false" makes it non-modal so it does NOT block the UI.
-            JDialog loading = new JDialog(this, "Please wait", false);
-            JLabel msg = new JLabel("   Logging in, please wait...   ");
-            msg.setFont(new Font("Raleway", Font.BOLD, 16));
-            loading.add(msg);
-            loading.pack();
-            loading.setLocationRelativeTo(this);
-            loading.setVisible(true);
+            statusLabel.setText("Logging in, please wait...");
+            login.setEnabled(false);
+            clear.setEnabled(false);
+            signup.setEnabled(false);
 
-            // 2. Create the thread object and hand it the dialog + this frame
-            //    so it can close the dialog and open Transactions when done.
-            LoginThread t = new LoginThread(card_number, pin_number, loading, this);
-
-            // 3. Set its priority (1 = MIN, 5 = NORMAL, 10 = MAX)
+            LoginThread t = new LoginThread(card_number, pin_number, this);
             t.setPriority(Thread.MAX_PRIORITY);
-
-            // 4. Start the thread - this calls run() in the background.
-            //    We do NOT join() here, otherwise the loading dialog would freeze.
             t.start();
         }
         else if(ae.getSource()==clear){
@@ -129,9 +126,8 @@ public class Login extends JFrame implements ActionListener{
             pintext.setText("");
         }
         else if(ae.getSource()==signup){
-            //close the login frame and open the signup frame.
             setVisible(false);
-            new SignupOne().setVisible(true);
+            new SignupOne(this).setVisible(true);
         }
     }
     public static void main (String args[]){

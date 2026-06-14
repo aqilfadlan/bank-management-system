@@ -4,50 +4,51 @@ import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-public class WithdrawThread extends Thread {
+// We extend Thread so this class IS a thread.
+public class DepositThread extends Thread {
 
     String pin;
     String money;
     boolean success = false;
 
     JDialog loadingDialog;
-    Withdraw withdrawFrame;
+    Deposit depositFrame;
     Login loginFrame;
 
-    WithdrawThread(String pin, String money, JDialog loadingDialog, Withdraw withdrawFrame, Login loginFrame) {
+    DepositThread(String pin, String money, JDialog loadingDialog, Deposit depositFrame, Login loginFrame) {
         this.pin = pin;
         this.money = money;
         this.loadingDialog = loadingDialog;
-        this.withdrawFrame = withdrawFrame;
+        this.depositFrame = depositFrame;
         this.loginFrame = loginFrame;
     }
 
     public void run() {
         try {
-            System.out.println("Withdraw thread started...");
+            System.out.println("Deposit thread started...");
             Thread.sleep(2000);
 
             Conn c = new Conn();
             Date date = new Date();
             String query = "insert into bank values ('" + pin + "', '" + date
-                         + "', 'Withdrawl', '" + money + "')";
+                         + "', 'Deposit', '" + money + "')";
             c.s.executeUpdate(query);
             success = true;
 
-            System.out.println("Withdraw thread finished.");
+            System.out.println("Deposit thread finished.");
         } catch (InterruptedException ie) {
-            System.out.println("Withdraw thread was interrupted!");
+            System.out.println("Deposit thread was interrupted!");
         } catch (Exception e) {
             System.out.println(e);
         }
 
         loadingDialog.dispose();
         if (success) {
-            JOptionPane.showMessageDialog(null, "RM " + money + " is withdrawn successfully.");
-            withdrawFrame.setVisible(false);
+            JOptionPane.showMessageDialog(null, "RM " + money + " is deposited successfully.");
+            depositFrame.setVisible(false);
             new Transactions(pin, loginFrame).setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(null, "Withdraw failed. Please try again.");
+            JOptionPane.showMessageDialog(null, "Deposit failed. Please try again.");
         }
     }
 }

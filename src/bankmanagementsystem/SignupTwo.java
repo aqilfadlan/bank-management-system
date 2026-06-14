@@ -12,15 +12,17 @@ public class SignupTwo extends JFrame implements ActionListener {
     JRadioButton syes,sno,eyes,eno;
     JButton next;
     String formno;
-    public SignupTwo(String formno){
+    Login loginFrame;
+    public SignupTwo(String formno, Login loginFrame){
         this.formno=formno;
+        this.loginFrame=loginFrame;
 
         heading = new JLabel("Page 2 : Additional Details");
         heading.setFont(new Font("Raleway",Font.BOLD,22));
         heading.setBounds(290,80,400,30);
         add(heading);
 
-        String[] belief = {"Hinduism","Muslim","Christanity","Sikhism","Buddhism","Others"};
+        String[] belief = {"Islam","Buddhism","Christianity","Hinduism","Taoism","Others"};
         belif = new JLabel("Religion :");
         belif.setFont(new Font("Raleway",Font.BOLD,20));
         belif.setBounds(100,140,100,30);
@@ -36,7 +38,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         religion.setRenderer(listRenderer); //this will align the items to the center in combobox
         add(religion);
 
-        String[] caste = {"General","SC","ST","OBC","Others"};
+        String[] caste = {"Bumiputera","Chinese","Indian","Others"};
         category = new JLabel("Category :");
         category.setFont(new Font("Raleway",Font.BOLD,20));
         category.setBounds(100,190,200,30);
@@ -49,7 +51,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         combocat.setRenderer(listRenderer);
         add(combocat);
 
-        String [] salary = {"Null","< 1,00,000","< 2,50,000","< 5,00,000","Upto 10,00,000"};
+        String [] salary = {"Null","< RM 30,000","< RM 60,000","< RM 120,000","Upto RM 250,000"};
         income = new JLabel("Income :");
         income.setFont(new Font("Raleway",Font.BOLD,20));
         income.setBounds(100,240,150,30);
@@ -92,7 +94,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         profession.setBounds(300, 390, 400, 30);
         add(profession);
 
-        pan = new JLabel("PAN Number :");
+        pan = new JLabel("NRIC Number :");
         pan.setFont(new Font("Raleway",Font.BOLD,20));
         pan.setBounds(100,440,150,30);
         add(pan);
@@ -101,7 +103,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         panno.setBounds(300, 440, 400, 30);
         add(panno);
 
-        adhar = new JLabel("Aadhar Number :");
+        adhar = new JLabel("MyKad Number :");
         adhar.setFont(new Font("Raleway",Font.BOLD,20));
         adhar.setBounds(100,490,180,30);
         add(adhar);
@@ -157,11 +159,11 @@ public class SignupTwo extends JFrame implements ActionListener {
         setTitle("NEW ACCOUNT APPLICATION FORM- PAGE 2");
         setLayout(null);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {
-        new SignupTwo("");
+        new Login();
     }
 
     @Override
@@ -206,10 +208,10 @@ public class SignupTwo extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null,"Please confirm if you have any existing account");
             }
             if(s_pan.equals("")){
-                JOptionPane.showMessageDialog(null,"Please enter your PAN number");
+                JOptionPane.showMessageDialog(null,"Please enter your NRIC number");
             }
             if(aadhar.equals("")){
-                JOptionPane.showMessageDialog(null,"Please enter your Aadhar Card number");
+                JOptionPane.showMessageDialog(null,"Please enter your MyKad number");
             }
             else {
                 Conn c = new Conn();
@@ -218,7 +220,7 @@ public class SignupTwo extends JFrame implements ActionListener {
 
                 //We have to link the signup 3 frame here
                setVisible(false);
-               new SignupThree(formno).setVisible(true);
+               new SignupThree(formno, loginFrame).setVisible(true);
             }
         }
         catch (Exception e1){

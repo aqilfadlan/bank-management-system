@@ -9,7 +9,9 @@ public class Transactions extends JFrame implements ActionListener {
 
     JButton deposit,withdrawl,fastcash,ministatement,pinchange,balance,exit;
     String pin_number;
-    Transactions(String pin_number){
+    Login loginFrame;
+    Transactions(String pin_number, Login loginFrame){
+        this.loginFrame = loginFrame;
 
         this.pin_number = pin_number;
 
@@ -67,32 +69,39 @@ public class Transactions extends JFrame implements ActionListener {
         setLayout(null);
 //        setUndecorated(true);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {
-        new Transactions("");
+        new Login();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==exit){
-            System.exit(0);
+            dispose();
+            loginFrame.cardtext.setText("");
+            loginFrame.pintext.setText("");
+            loginFrame.statusLabel.setText("");
+            loginFrame.login.setEnabled(true);
+            loginFrame.clear.setEnabled(true);
+            loginFrame.signup.setEnabled(true);
+            loginFrame.setVisible(true);
         } else if (e.getSource()==deposit) {
             setVisible(false);
-            new Deposit(pin_number).setVisible(true);
+            new Deposit(pin_number, loginFrame).setVisible(true);
         } else if (e.getSource()==withdrawl) {
             setVisible(false);
-            new Withdraw(pin_number).setVisible(true);
+            new Withdraw(pin_number, loginFrame).setVisible(true);
         } else if (e.getSource()==fastcash) {
             setVisible(false);
-            new FastCash(pin_number).setVisible(true);
+            new FastCash(pin_number, loginFrame).setVisible(true);
         } else if (e.getSource()==pinchange) {
             setVisible(false);
-            new PinChange(pin_number).setVisible(true);
+            new PinChange(pin_number, loginFrame).setVisible(true);
         } else if (e.getSource()==balance) {
             setVisible(false);
-            new BalanceEnquiry(pin_number).setVisible(true);
+            new BalanceEnquiry(pin_number, loginFrame).setVisible(true);
         } else if (e.getSource()==ministatement) {
 //            setVisible(false);
             new MiniStatement(pin_number).setVisible(true);

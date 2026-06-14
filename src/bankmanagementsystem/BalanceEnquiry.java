@@ -4,14 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 
 public class BalanceEnquiry extends JFrame implements ActionListener {
     String pin_number;
+    Login loginFrame;
     JButton back;
 
-    BalanceEnquiry(String pin_number){
+    BalanceEnquiry(String pin_number, Login loginFrame){
         this.pin_number=pin_number;
+        this.loginFrame=loginFrame;
 
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/atm.jpg"));
         Image i2= i1.getImage().getScaledInstance(900,900,Image.SCALE_DEFAULT);
@@ -25,42 +26,41 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
         back.addActionListener(this);
         image.add(back);
 
-        Conn c= new Conn();
-        int balance=0;
-        try{
-            ResultSet rs = c.s.executeQuery("select * from bank where Pin = '"+pin_number+"'");
-            while(rs.next()){
-                if(rs.getString("type").equals("Deposit")){
-                    balance+=Integer.parseInt(rs.getString("amount"));
-                }else{
-                    balance -= Integer.parseInt(rs.getString("amount"));
-                }
-            }
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-
-        JLabel text = new JLabel("Your Current Account Balance is Rs. "+balance);
+        // Create the balance label empty for now; the thread fills it in.
+        JLabel text = new JLabel("");
         text.setForeground(Color.WHITE);
         text.setBounds(170,300,400,30);
         image.add(text);
+
+        // Show a small non-modal "please wait" dialog while the balance loads.
+        JDialog loading = new JDialog(this, "Please wait", false);
+        JLabel msg = new JLabel("   Fetching your balance, please wait...   ");
+        msg.setFont(new Font("Raleway", Font.BOLD, 16));
+        loading.add(msg);
+        loading.pack();
+        loading.setLocationRelativeTo(this);
+        loading.setVisible(true);
+
+        // BalanceEnquiryThread implements Runnable and builds + starts its own
+        // Thread inside its constructor, so simply creating it runs the query
+        // in the background and updates the label when done.
+        new BalanceEnquiryThread(pin_number, loading, text);
 
         setLayout(null);
         setSize(900,900);
         setVisible(true);
         setTitle("Balance Enquiry");
         setLocation(300,0);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {
-        new BalanceEnquiry("");
+        new Login();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(false);
-        new Transactions(pin_number).setVisible(true);
+        new Transactions(pin_number, loginFrame).setVisible(true);
     }
 }

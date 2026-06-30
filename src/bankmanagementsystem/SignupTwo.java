@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SignupTwo extends JFrame implements ActionListener {
-    JLabel heading,belif,category,income,educational,qualification,occupation,pan,adhar,senior,existing;
+    JLabel heading,belif,category,income,educational,qualification,occupation,adhar,senior,existing;
     JComboBox religion,combocat,comboin,comboed,profession;
-    JTextField panno,adhartext;
+    JTextField adhartext;
     JRadioButton syes,sno,eyes,eno;
     JButton next;
     String formno;
@@ -94,34 +94,25 @@ public class SignupTwo extends JFrame implements ActionListener {
         profession.setBounds(300, 390, 400, 30);
         add(profession);
 
-        pan = new JLabel("NRIC Number :");
-        pan.setFont(new Font("Raleway",Font.BOLD,20));
-        pan.setBounds(100,440,150,30);
-        add(pan);
-        panno = new JTextField();
-        panno.setFont(new Font("Raleway",Font.BOLD,14));
-        panno.setBounds(300, 440, 400, 30);
-        add(panno);
-
         adhar = new JLabel("MyKad Number :");
         adhar.setFont(new Font("Raleway",Font.BOLD,20));
-        adhar.setBounds(100,490,180,30);
+        adhar.setBounds(100,440,200,30);
         add(adhar);
         adhartext = new JTextField();
         adhartext.setFont(new Font("Raleway",Font.BOLD,14));
-        adhartext.setBounds(300, 490, 400, 30);
+        adhartext.setBounds(300, 440, 400, 30);
         add(adhartext);
 
         senior = new JLabel("Senior Citizen :");
         senior.setFont(new Font("Raleway",Font.BOLD,20));
-        senior.setBounds(100,540,150,30);
+        senior.setBounds(100,490,150,30);
         add(senior);
         syes=new JRadioButton("YES");
-        syes.setBounds(360,540,100,30);
+        syes.setBounds(360,490,100,30);
         syes.setBackground(Color.WHITE);
         add(syes);
         sno=new JRadioButton("NO");
-        sno.setBounds(490, 540, 100, 30);
+        sno.setBounds(490, 490, 100, 30);
         sno.setBackground(Color.WHITE);
         add(sno);
         ButtonGroup seniorgroup = new ButtonGroup();
@@ -130,14 +121,14 @@ public class SignupTwo extends JFrame implements ActionListener {
 
         existing = new JLabel("Existing Account :");
         existing.setFont(new Font("Raleway",Font.BOLD,20));
-        existing.setBounds(100,590,190,30);
+        existing.setBounds(100,540,190,30);
         add(existing);
         eyes=new JRadioButton("YES");
-        eyes.setBounds(360,590,100,30);
+        eyes.setBounds(360,540,100,30);
         eyes.setBackground(Color.WHITE);
         add(eyes);
         eno=new JRadioButton("NO");
-        eno.setBounds(490, 590, 100, 30);
+        eno.setBounds(490, 540, 100, 30);
         eno.setBackground(Color.WHITE);
         add(eno);
         ButtonGroup existinggroup = new ButtonGroup();
@@ -185,7 +176,6 @@ public class SignupTwo extends JFrame implements ActionListener {
         } else if (eno.isSelected()) {
             existingaccount="No";
         }
-        String s_pan = panno.getText();
         String aadhar = adhartext.getText();
 
         try{
@@ -207,15 +197,12 @@ public class SignupTwo extends JFrame implements ActionListener {
             if(existingaccount.equals("")){
                 JOptionPane.showMessageDialog(null,"Please confirm if you have any existing account");
             }
-            if(s_pan.equals("")){
-                JOptionPane.showMessageDialog(null,"Please enter your NRIC number");
-            }
             if(aadhar.equals("")){
                 JOptionPane.showMessageDialog(null,"Please enter your MyKad number");
             }
             else {
                 Conn c = new Conn();
-                String query = "insert into signuptwo values ('"+formno+"', '"+sreligion+"', '"+scategory+"', '"+sincome+"', '"+seducation+"', '"+sprofession+"', '"+s_pan+"', '"+aadhar+"', '"+seniorcitizen+"', '"+existingaccount+"')";
+                String query = "insert into signuptwo values ('"+formno+"', '"+sreligion+"', '"+scategory+"', '"+sincome+"', '"+seducation+"', '"+sprofession+"', '"+aadhar+"', '"+seniorcitizen+"', '"+existingaccount+"')";
                 c.s.executeUpdate(query);
 
                 //We have to link the signup 3 frame here

@@ -12,7 +12,7 @@ public class SignupOne extends JFrame implements ActionListener {
     JTextField nametext,fnametext,emailtext,citytext,pintext,addresstext;
     JComboBox drop;
     JDateChooser date;
-    JRadioButton male,female,trans,single,married,divorced;
+    JRadioButton male,female,single,married,divorced;
     ButtonGroup radiogroup,maritalgroup;
     JButton next;
 
@@ -79,14 +79,9 @@ public class SignupOne extends JFrame implements ActionListener {
         female.setBounds(400, 290, 70, 30);
         female.setBackground(Color.WHITE);
         add(female);
-        trans=new JRadioButton("Transgender");
-        trans.setBounds(500, 290, 100, 30);
-        trans.setBackground(Color.WHITE);
-        add(trans);
         radiogroup = new ButtonGroup();
         radiogroup.add(male);
         radiogroup.add(female);
-        radiogroup.add(trans);
         
         JLabel email = new JLabel("Email :");
         email.setFont(new Font("Raleway",Font.BOLD,20));
@@ -191,9 +186,7 @@ public class SignupOne extends JFrame implements ActionListener {
         else if(female.isSelected()){
             gender="Female";
         }
-        else if(trans.isSelected()){
-            gender="Transgender";
-        }
+
         String email = emailtext.getText();
         //checking the marital status
         String marriage = null;
